@@ -1,0 +1,19 @@
+## 피보나치
+num = int(input())
+
+
+def fibonach(a,b,count) :
+    if num == 0 :
+        print(a)
+    elif num == 1 :
+        print(b)
+    else :
+        c = a+b
+
+        if count == num :
+            return print(c)
+
+        return fibonach(b,c,count+1)
+
+
+fibonach(0,1,2)
