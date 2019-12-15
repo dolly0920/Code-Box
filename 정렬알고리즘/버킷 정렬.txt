@@ -1,0 +1,14 @@
+## 버킷 정렬 (not exist answer)
+def bucket_sort(array) :
+    answer = []
+    length = max(array) - min(array) + 1
+    bucket_list = [0]*length
+
+    for i in range (len(array)) :
+        bucket_list[array[i]-min(array)] = array[i]
+
+    for i in bucket_list :
+        if i != 0 :
+            answer.append(i)
+
+    return answer
