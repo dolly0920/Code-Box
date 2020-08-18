@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+
+struct Node {
+	int data;
+	struct Node* pNode;
+};
+
+int node_index;
+
+struct Node pop_front(struct Node** xNode) {
+	struct Node currNode = **xNode;
+	*xNode = currNode.pNode;
+	return currNode;
+}
+
+void push_back(struct Node* xNode, int data) { 
+	struct Node* currNode = xNode;
+	while ((currNode->pNode) != NULL) {
+		currNode = currNode->pNode;
+	}
+	currNode->pNode = (struct Node*)malloc(sizeof(struct Node)); // 새로운 공간을 할당한다.
+	currNode->pNode->data = data;
+	currNode->pNode->pNode = NULL;
+}
+
+bool empty(struct Node* xNode) {
+	if (xNode == NULL)
+	{
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+struct Node front(struct Node* xNode) {
+	return *xNode;
+}
+
+void printList(struct Node* xNode) {
+	while (xNode != NULL) {
+		printf("%2d ", xNode->data);
+		xNode = xNode->pNode;
+	}
+	printf("\n");
+}
+
+
+int main(void)
+{
+	struct Node nodeA = { 10,0 },
+		nodeB = { 20,0 },
+		nodeC = { 30,0 };
+	
+	struct Node* headNode;
+	struct Node* currNode;
+
+	headNode = &nodeA; // 가장 앞의 노드
+	nodeA.pNode = &nodeB;
+	nodeB.pNode = &nodeC;
+
+	currNode = &nodeC; // 가장 끝의 노드
+
+	int command;
+	int input_num;
+	while (1)
+	{
+		printf("(1)pop_front, (2)push_back, (3)empty, (4)front, (5)printList");
+		scanf("%d", &command);
+		if (command == 1) { // pop
+			printf("%d\n", pop_front(&headNode).data);
+		}
+		else if (command == 2) { // push
+			printf("숫자 : ");
+			scanf("%d",&input_num);
+			push_back(currNode, input_num);
+		}
+		else if (command == 3) { // empty
+			if (empty(headNode)) {
+				printf("true\n");
+			}
+			else {
+				printf("false\n");
+			}
+		}
+		else if (command == 4) {
+			printf("%d\n", front(headNode).data);
+		}
+		else if (command == 5) {
+			printList(headNode);
+		}
+	}
+
+	return 0;
+}
