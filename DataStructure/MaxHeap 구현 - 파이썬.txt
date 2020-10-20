@@ -1,0 +1,65 @@
+class MaxHeap() :
+    def __init__(self):
+        self.data = [None] ## data => heap배열 (초기값은 data[0] = none으로 시작) ## 연관 관계를 배열로 정의한다. (bst와 다른점)
+
+    def insert(self,item): ## item 추가
+        self.data.append(item) ## 배열의 끝에 item추가
+        i = len(self.data)-1 ## i는 item의 인덱스 번호
+
+        while i>1 : ## 1보다 클 때
+            if self.data[i] > self.data[i//2] : ## 부모 노드의 값보다 자식 노드의 값이 큰 경우
+                self.data[i],self.data[i//2] = self.data[i//2],self.data[i] ## swap
+                i = i//2 ## 부모노드로 올라가서 다시 수행
+            else :
+                break ## 조건을 만족하므로 break
+
+    def heap_pop(self): ## pop
+        if len(self.data) > 1 : ## 노드 갯수가 2개이상인 경우
+            self.data[1],self.data[-1] = self.data[-1],self.data[1] ## swap (마지막 노드(-1)와 루트 노드(1) 교환)
+            data = self.data.pop() ## 마지막 노드 제거
+            self.maxHeapify(1) ## 정리(최대힙구조 유지)
+        else :
+            data = None
+        return data ## 여기의 data는 Maxheap의 data배열이 아닌 pop된 값이다!
+
+    def maxHeapify(self,i) : ## i는 heapify 시작 노드의 번호
+        left = 2*i ## 왼쪽 자식
+        right = 2*i + 1 ## 오른쪽 자식
+        biggest = i
+
+        if left < len(self.data) and self.data[i] < self.data[left] : ## 왼쪽 자식이 존재하고, 왼쪽 자식의 값이 자신보다 큰 경우
+            biggest = left
+        if right < len(self.data) and self.data[i] < self.data[right] : ## 오른쪽 자식이 존재하고, 오른쪽 자식의 값이 자신보다 큰 경우
+            biggest = right
+
+        if biggest != i : ## 현재의 노드가 가장 큰 값이 아닌 경우 (재귀적으로 판단)
+            self.data[i],self.data[biggest] = self.data[biggest],self.data[i] ## swap
+            self.maxHeapify(i) ## 위에서 swap한 뒤 다시 실행 (결국 자신의 노드가 left,right,자신 중에 최대가 될 때 종료된다.
+
+        return
+
+
+if __name__ == "__main__" :
+    mh = MaxHeap() ## 최대힙 선언 (초기값 [None])
+    mh.insert(1)
+    mh.insert(3)
+    mh.insert(5)
+    mh.insert(11)
+    mh.insert(6)
+    mh.insert(5)
+    mh.insert(2)
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
+    print(mh.heap_pop())
+    print(mh.data)
