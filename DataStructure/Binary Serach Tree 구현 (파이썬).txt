@@ -1,0 +1,94 @@
+class Node() :
+    def __init__(self,data) :
+        self.data = data ## 데이터 주입
+        self.left = None
+        self.right = None ## left,right 자식은 비워져 있는 상태
+
+class Binary_Search_Tree() :
+    ## 초기화
+    def __init__(self):
+        self.root = None ## 처음 선언 시 루트 노드는 비어있는 상태
+
+    ## 삽입
+    def insert(self,data): ## 삽입
+        self.root = self._insert_value(self.root,data)
+        return self.root is not None
+
+    def _insert_value(self,node,data):
+        if node is None : ## 비어있는 노드라면
+            node = Node(data)
+        else :
+            if data <= node.data : ## 삽입하려는 데이터가 노드의 데이터보다 작거나 같다면 (왼쪽)
+                node.left = self._insert_value(node.left,data) ## 왼쪽 자식 방향 확인
+            else :
+                node.right = self._insert_value(node.right,data) ## 오른쪽 자식 방향 확인
+        return node ## 반환하는 노드 결국 루트 노드이다.
+
+    ## 찾기
+    def find(self,key) :
+        return self._find_value(self.root,key)
+
+    def _find_value(self,node,key) :
+        if node is None or node.data == key :
+            return node is not None ## node가 비어있다면 False 아니라면 True
+        elif key < node.data : ## 노드의 데이터보다 찾으려는 값이 작다면
+            return self._find_value(node.left,key)
+        else : ## 더 크다면
+            return self._find_value(node.right,key)
+
+    ## 삭제
+    def delete(self,key):
+        self.root, deleted = self._delete_value(self.root,key)
+        return deleted
+
+    def _delete_value(self,node,key):
+        if node is None :
+            return node,False ## 노드를 반환하고 값이 없다는 것을 알리기 위해 False 반환 (삭제되는 노드, 상태)
+
+        deleted = False
+        if key == node.data : ## 삭제해야할 노드라면
+            deleted = True
+            if node.left and node.right : ## 자식 노드가 둘 다 존재한다면
+                parent,child = node,node.right ## node의 오른쪽 자식 탐색
+                while child.left is not None : ## 오른쪽 자식노드의 왼쪽 자식노드가 있다면
+                    parent,child = child,child.left ## while문을 통해 오른쪽 자식 중에서 가장 왼쪽(가장 작은) 노드를 추출한다.
+                child.left = node.left ## 노드의 자리에 child노드를 넣을 것이므로 자식을 갱신한다.(child노드는 끝까지 간 리프노드이기때문에 자식노드를 고려할 필요가 없다.
+                if parent != node : ## 부모 노드가 시작점이 아니라면 (부모노드가 시작점이라면 바로 교체하는것이다.)
+                    parent.left = child.right ## (parent.left는 child인데 chlid가 node의 위치로 가므로 child의 하위에 있는 노드를 parent에 이어준다.)
+                    child.right = node.right ## child의 오른쪽 자식은 기존의 node의 오른쪽 자식을 가리키도록 바꾼다.
+                node = child ## child의 자식 관계설정이 완료된 뒤 node에 대입한다. (node는 삭제)
+            elif node.left or node.right : ## 둘 중 하나의 노드만 존재하는 경우
+                node = node.left or node.right ## 한 쪽만 존재하므로 node 자체를 한쪽으로 이동시키면 그것이 트리형태가 된다.
+            else : ## 둘다 없는 경우
+                node = None ## 아무것도 없는 상태
+        elif key < node.data : ## 작은 경우 (왼쪽 탐색)
+            node.left,deleted = self._delete_value(node.left,key) ## 재귀 (왼쪽)
+        else : ## 큰 경우 (오른쪽 탐색)
+            node.right,deleted = self._delete_value(node.right,key) ## 재귀 (오른쪽)
+
+        return node, deleted
+
+
+if __name__ == "__main__" :
+    ## Binary Search Tree 구현하기
+    array = [40, 4, 34, 45, 14, 55, 48, 13, 15, 49, 47]
+    bst = Binary_Search_Tree() ## 초기 트리 선언
+    print("-----삽입-------")
+    for x in array :
+        bst.insert(x)
+
+    print("----확인------")
+    print(bst.find(40))
+    print(bst.find(4))
+    print(bst.find(48))
+    print(bst.find(1523))
+    print("------4,34 삭제-------")
+
+    bst.delete(4)
+    bst.delete(34)
+
+    print("----확인-----")
+    print(bst.find(4))
+    print(bst.find(34))
+    print(bst.find(40))
+    print(bst.find(1523))
