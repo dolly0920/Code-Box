@@ -1,0 +1,175 @@
+import sys
+
+## 정렬알고리즘 : (비교기반 정렬) 버블소트, 선택정렬, 삽입정렬, 퀵정렬, 머지소트 // (정수기반 정렬) Counting Sort, Radix Sort
+
+## 오름차순 정렬
+
+## Bubble Sort(확인 여부 :  ) 시간복잡도 :
+def Bubble_sort(arr) :
+    for i in range (len(arr)-1) :
+        for j in range (1,len(arr)-i) :
+            if arr[j] < arr[j-1] :
+                arr[j],arr[j-1] = arr[j-1],arr[j] ## swap (때마다 위치 변경)
+    return arr
+
+## Selection Sort(확인 여부 : ) 시간복잡도 :
+def Select_sort(arr) :
+    for i in range (len(arr)-1) :
+        index = i
+        for j in range (i+1,len(arr)) :
+            if arr[index] > arr[j] : ## j가 더 작다면
+                index = j
+        arr[i],arr[index] = arr[index],arr[i] ## swap (가장 작은 값을 골라서 변경)
+    return arr
+
+## Insertion Sort(확인 여부 : ) 시간복잡도 :
+def insertion_sort(arr):
+    for end in range(1, len(arr)):
+        to_insert = arr[end]
+        i = end
+        while i > 0 and arr[i - 1] > to_insert: ## arr[i-1]이 더 클 때,
+            arr[i] = arr[i - 1] ## 오른쪽으로 한칸씩 민다.
+            i -= 1
+        arr[i] = to_insert ## 삽입
+    return arr
+
+## quick Sort(확인 여부 : O) 시간복잡도 :
+def partition(data, start, end): ## in-place 방식 배열자체에서 위치를 swap해서 메모리공간을 절약한다.
+    pivot = data[end] # 피봇은 마지막 원소로
+    current_small_loc = start # 검은색 지시자
+
+    # i 는 빨간색 지시자
+    for i in range(start, end + 1):
+        if data[i] <= pivot: ## pivot 보다 작거나 같으면 swap (그림 설명 보면 이해가능)
+            # swap 을 수행
+            data[i], data[current_small_loc] = data[current_small_loc], data[i]
+            current_small_loc += 1
+    return current_small_loc - 1 ## 초기 피봇으로 설정한 원소의 인덱스 리턴 ## 마지막 원소를 pivot으로 설정했으므로 current_small_loc의 값 - 1 이 pivot의 위치가 된다.
+
+def quick_sort(data,start,end) :
+    if start>=end :
+        ## 원소가 1개거나 없는 경우
+        return
+
+    pivot_pos = partition(data,start,end) ## 파티션 후 피봇의 위치 반환
+
+    quick_sort(data,start,pivot_pos-1) ## pivot보다 작은 부분(partition) 정렬
+    quick_sort(data,pivot_pos+1,end) ## pivot보다 큰 부분(partition) 정렬
+
+    return data
+
+## merge_sort(병합 정렬) (확인 여부 : O) 시간복잡도 : O(nlogn)
+def merge(left,right) :
+    '''
+    if len(left) <= 0 : ## left가 빈 배열이라면
+        return right
+
+    if len(right) <= 0 : ## right가 빈 배열이라면
+        return left
+    '''
+
+    sorted_arr = []
+    left_index = 0
+    right_index = 0
+
+    while left_index < len(left) and right_index < len(right) : ## 둘 중하나라도 인덱스 초과가 생긴다면 break
+        if left[left_index] > right[right_index] :
+            sorted_arr.append(right[right_index])
+            right_index += 1
+        else :
+            sorted_arr.append(left[left_index])
+            left_index += 1
+
+    if left_index < len(left) :
+        sorted_arr += left[left_index:]
+
+    if right_index < len(right) :
+        sorted_arr += right[right_index:]
+
+    return sorted_arr
+
+def merge_sort(arr) :
+    if len(arr) <= 1 : ## 배열의 길이가 1 이하라면
+        return arr
+
+    mid = len(arr)//2 ## 분할정복
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+
+    return merge(left,right)
+
+## ------------------------------------------------------------------ ##
+## 정수정렬
+
+##Counting Sort(계수 정렬)
+def counting_sort(arr) :
+    max_num = max(arr) ## O(n)
+
+    num_table = [0]*(max_num+1) ## num_table[i] : 숫자 i의 갯수
+
+    for x in arr :
+        num_table[x] += 1 ## 갯수 +1
+
+    ## 내 생각 => 여기서 그냥 0 ~ k까지 돌면서
+    '''
+    sorted_arr = []
+    for i in range (max_num+1) :
+        if num_table[i] > 0 :
+            sorted_arr += [i]*num_table[i]
+    '''
+
+    for i in range (1,len(num_table)) :
+        num_table[i] += num_table[i-1] ## 여기서 이제 num_table[i] : 숫자 i의 정렬된 배열에서의 (최대)순서 (인덱스는 값에서 -1 해야한다 why? 1번째는 원소는 인덱스 0으로 표현되기 때문에)
+
+    sorted_arr = [0]*(len(arr))
+    for i in range (len(arr)-1,-1,-1) : ## 반대로 연산 (why? 원래 배열의 순서를 유지하기 위해서 (같은 값일때는 원래 뒤에 있던 원소가 뒤에 있을수 있도록)
+        sorted_arr[num_table[arr[i]]-1] = arr[i]
+        num_table[arr[i]] -= 1 ## 앞에서 숫자 하나를 썼으므로 한개 당겨준다.
+    return sorted_arr
+
+## Radix Sort(기수 정렬)
+def get_i_th_digit(num, index):
+    if len(num) <= index: ## (ex) 10인데 3번째 인덱스를 보려고할 때
+        return 0
+    return int(num[len(num) - index - 1])
+
+def count_sort(data, index):
+    # 전체 데이터 개수
+    n = len(data)
+
+    # 10 진법 숫자이므로 어차피 0 부터 9 까지 밖에 없다.
+    table = [0] * 10
+
+    # 각 원소가 등장하는 횟수를 구한다.
+    for element in data:
+        table[get_i_th_digit(element, index)] += 1
+
+    # 각 원소의 위치를 구한다.
+    for i in range(1, len(table)):
+        table[i] += table[i - 1]
+
+    sorted_array = [0] * n
+
+    for elem in reversed(data):
+        digit = get_i_th_digit(elem, index)
+        sorted_array[table[digit] - 1] = elem
+        table[digit] -= 1
+
+    return sorted_array
+
+def radix_sort(data):
+    # 편의상 모든 숫자들을 문자열로 바꾼다.
+    str_data = []
+    for num in data:
+        str_data.append(str(num))
+
+    max_len_num = max([len(s) for s in str_data])
+    for i in range(max_len_num):
+        str_data = count_sort(str_data, i)
+
+    return str_data
+
+
+if __name__ == "__main__" :
+    arr = [300,20,1,5,4]
+    print(radix_sort(arr))
