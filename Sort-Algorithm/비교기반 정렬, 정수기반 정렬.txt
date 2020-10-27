@@ -28,6 +28,7 @@ def insertion_sort(arr):
         for i in range(end, 0, -1):
             if arr[i - 1] > arr[i]:
                 arr[i - 1], arr[i] = arr[i], arr[i - 1]
+    return arr
 
 ## quick Sort(확인 여부 : O) 시간복잡도 :
 def partition(data, start, end): ## in-place 방식 배열자체에서 위치를 swap해서 메모리공간을 절약한다.
