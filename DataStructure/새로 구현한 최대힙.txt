@@ -1,0 +1,68 @@
+##최대힙
+
+class Maxheap() :
+    def __init__(self):
+        self.data = [None]
+
+    def insert(self,num):
+        self.data.append(num) ## data추가
+        index = len(self.data)-1
+
+        while index > 1 : ## index=1 root노드
+            if self.data[index] > self.data[index//2] : ## 부모 노드보다 값이 큰 경우
+                self.data[index], self.data[index//2] = self.data[index//2],self.data[index] ## swap
+                index = index//2
+            else :
+                break
+
+    def heappop(self):
+        if len(self.data) > 1 : ## 원소가 들어있다면
+            self.data[1],self.data[-1] = self.data[-1],self.data[1]
+            pop_data = self.data.pop()
+            self.heapify(1) ## 루트 노드 성질 확인
+        else :
+            pop_data = None
+        return pop_data
+
+    def heapify(self,index): ## 시작인덱스
+        left = index*2
+        right = index*2+1
+        biggest = index ## 자기 자신, 왼쪽 자식, 오른쪽 자식 중 가장 큰 값을 뽑기 위한 인덱스
+
+        if left < len(self.data) and self.data[left] > self.data[index] :
+            biggest = left
+        if right < len(self.data) and self.data[right] > self.data[index] :
+            biggest = right
+
+        if biggest != index :
+            self.data[index],self.data[biggest] = self.data[biggest],self.data[index] ## swap
+            self.heapify(index)
+
+        return
+
+
+if __name__ == "__main__" :
+    arr = [5,2,3,4,1]
+    mh = Maxheap()
+    mh.insert(1)
+    mh.insert(3)
+    mh.insert(5)
+    mh.insert(11)
+    mh.insert(6)
+    mh.insert(5)
+    mh.insert(2)
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
+    print(mh.heappop())
+    print(mh.data)
