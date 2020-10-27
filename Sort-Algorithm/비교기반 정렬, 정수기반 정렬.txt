@@ -25,13 +25,9 @@ def Select_sort(arr) :
 ## Insertion Sort(확인 여부 : ) 시간복잡도 :
 def insertion_sort(arr):
     for end in range(1, len(arr)):
-        to_insert = arr[end]
-        i = end
-        while i > 0 and arr[i - 1] > to_insert: ## arr[i-1]이 더 클 때,
-            arr[i] = arr[i - 1] ## 오른쪽으로 한칸씩 민다.
-            i -= 1
-        arr[i] = to_insert ## 삽입
-    return arr
+        for i in range(end, 0, -1):
+            if arr[i - 1] > arr[i]:
+                arr[i - 1], arr[i] = arr[i], arr[i - 1]
 
 ## quick Sort(확인 여부 : O) 시간복잡도 :
 def partition(data, start, end): ## in-place 방식 배열자체에서 위치를 swap해서 메모리공간을 절약한다.
