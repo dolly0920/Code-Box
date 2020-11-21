@@ -1,0 +1,72 @@
+##Radix sort (기수 정렬)
+def get_i_th_digit(str,index) :
+    if len(str) <= index :
+        return 0
+    return int(str[len(str)-index-1])
+
+
+def r_counting_sort(data,index) :
+    table = [0]*10 ## 0~9의 숫자 카운트
+
+    for x in data :
+        table[get_i_th_digit(x,index)] += 1
+
+    for i in range (1,10) :
+        table[i] += table[i-1]
+
+    sorted = [0]*len(data)
+    for i in range (len(data)-1,-1,-1) :
+        digit = get_i_th_digit(data[i],index)
+        sorted[table[digit]-1] = data[i]
+        table[digit] -= 1
+    return sorted
+
+
+def radix_sort(arr) :
+    str_data = []
+    max_length = -1 ## 최대 숫자 길이
+    for x in arr :
+        tmp = str(x)
+        max_length = max(max_length,len(tmp))
+        str_data.append(tmp)
+
+    for i in range (max_length+1) :
+        str_data = r_counting_sort(str_data,i)
+
+    return str_data
+
+## 힙소트 구현 (비교 기반)
+def heapify(arr,index,n) : ## (배열,인덱스,길이)
+    left_child_index = index*2
+    right_child_index = index*2+1
+    s_index = index
+    if left_child_index <= n and arr[left_child_index] < arr[s_index] :
+        s_index = left_child_index
+    if right_child_index <= n and arr[right_child_index] < arr[s_index] :
+        s_index = right_child_index
+    if s_index != index :
+        arr[index],arr[s_index] = arr[s_index],arr[index]
+        heapify(arr,s_index,n)
+    return
+
+def heap_sort(arr) :
+    n = len(arr)
+    arr = [0] + arr
+
+    ## min heap
+    for i in range (n,0,-1) :
+        heapify(arr,i,n)
+
+    sorted = []
+    ## min element pop
+    for i in range (n-1,-1,-1) :
+        sorted.append(arr[1])
+        arr[1],arr[i+1] = arr[i+1],arr[1]
+        heapify(arr,1,i)
+
+    return sorted
+
+
+if __name__ == "__main__" :
+    arr = [5,3,4,1,2]
+    print(heap_sort(arr))
